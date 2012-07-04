@@ -1,13 +1,15 @@
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
+import outil.getApi
 
 
 class MainPage(webapp.RequestHandler):
     
-     
-    
     def get(self):
-        reponse = "<html> fred </html>"
+        
+        requete = outil.getApi.getApi()
+        reponse = requete.get('resto', 'toronto')
+        
         self.response.headers['Content-Type'] = 'text/html'
         self.response.out.write('' + reponse )
 
