@@ -23,7 +23,7 @@ class getApi:
         if response.status == 200 :
             return content
         else:
-            return "{error !!!}"
+            return "Erreur dans interogation API !!!"
 
 
 
