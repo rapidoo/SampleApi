@@ -9,9 +9,10 @@ class MainPage(webapp.RequestHandler):
     
     def get(self):
         
-        url1 = '<!DOCTYPE html><html><head></head><body><h1>Saisir votre requetre</h1><form name="input" action="/getBusiness" method="get">'
-        url2 = 'What: <input type="text" name="what" />Where: <input type="text" name="where" /><input type="submit" value="Submit" /></form></body></html>'
-        reponse = url1 + url2
+        url1 = '<!DOCTYPE html><html><head></head><body><h1>Saisir votre requete sur API Canada</h1>'
+        url2 = '<form name="input" action="/getBusiness" method="get">'
+        url3 = 'What: <input type="text" name="what" />Where: <input type="text" name="where" /><input type="submit" value="Submit" /></form></body></html>'
+        reponse = url1 + url2 + url3
         self.response.headers['Content-Type'] = 'text/html'
         self.response.out.write('' + reponse )
 
@@ -20,10 +21,10 @@ class getBusinessRestHandler(webapp.RequestHandler):
 
     def get(self, what, where):
         
-        requete = getApi.getApi()
-        reponse = requete.gfetch(what, where)
+        requete = getApi.Canada()
+        reponse = requete.listeReponse(what, where)
     
-        html = getHtml.getHtml() 
+        html = getHtml.ParseCanada() 
         fluxHtml = html.get(reponse) 
 
         self.response.headers['Content-Type'] = 'text/html'
@@ -34,14 +35,13 @@ class getBusinessHandler(webapp.RequestHandler):
 
     def get(self):
         
-        requete = getApi.getApi()
-        
         what = self.request.get("what")
         where = self.request.get("where")
         
-        reponse = requete.gfetch(what, where)
+        requete = getApi.Canada()
+        reponse = requete.listeReponse(what, where)
         
-        html = getHtml.getHtml() 
+        html = getHtml.ParseCanada() 
         fluxHtml = html.get(reponse)
 
         self.response.headers['Content-Type'] = 'text/html'
