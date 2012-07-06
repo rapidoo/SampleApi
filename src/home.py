@@ -1,7 +1,9 @@
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
-import outil.getApi
-import outil.getHtml
+from outil import getApi
+from outil import getHtml
+
+
 
 class MainPage(webapp.RequestHandler):
     
@@ -18,11 +20,11 @@ class getBusinessRestHandler(webapp.RequestHandler):
 
     def get(self, what, where):
         
-        requete = outil.getApi.getApi()
-        reponse = requete.get(what, where)
+        requete = getApi.getApi()
+        reponse = requete.gfetch(what, where)
     
-        html = outil.getHtml.getHtml() 
-        fluxHtml = html.get(reponse)
+        html = getHtml.getHtml() 
+        fluxHtml = html.get(reponse) 
 
         self.response.headers['Content-Type'] = 'text/html'
         self.response.out.write('' + fluxHtml )
@@ -30,17 +32,20 @@ class getBusinessRestHandler(webapp.RequestHandler):
 
 class getBusinessHandler(webapp.RequestHandler):
 
-    def post(self):
+    def get(self):
         
-        requete = outil.getApi.getApi()
+        requete = getApi.getApi()
         
-        what = self.request.get('what')
-        where = self.request.get('where')
+        what = self.request.get("what")
+        where = self.request.get("where")
         
-        reponse = requete.get(what, where)
+        reponse = requete.gfetch(what, where)
         
+        html = getHtml.getHtml() 
+        fluxHtml = html.get(reponse)
+
         self.response.headers['Content-Type'] = 'text/html'
-        self.response.out.write('' + reponse )
+        self.response.out.write(fluxHtml)
 
         
 
