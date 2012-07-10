@@ -37,6 +37,8 @@ class ParseCanada:
                 name = bloc['name']
                 adress = bloc['address']
                 prov = adress['prov']
+                if(prov==''):
+                    prov='Canada'
                 street = adress['street']
                 city = adress['city']
                 numero=''
@@ -45,7 +47,7 @@ class ParseCanada:
                     detail = simplejson.loads(detail)
                     numero = self.getNumero(detail)
                 except Exception:
-                    numero = 'non present'
+                    numero = ''
                         
                 fluxHtml = fluxHtml + '<li>' + name +'</br><ul>'
                 fluxHtml = fluxHtml + '<li>' + street + '</li><li>' + city + '</li>' 
