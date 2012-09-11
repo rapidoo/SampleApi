@@ -2,33 +2,29 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 from outil import getApi
 from outil import getHtml
-
+from outil import getWhere
 
 
 class MainPage(webapp.RequestHandler):
     
     def get(self):
         
-        url1 = '<!DOCTYPE html><html><head></head><body><h1>Saisir votre requete sur API Canada</h1>'
-        url2 = '<form name="input" action="/getBusiness" method="get">'
-        url3 = 'What: <input type="text" name="what" />Where: <input type="text" name="where" /><input type="submit" value="Submit" /></form></body></html>'
-        reponse = url1 + url2 + url3
+        reponse = getHtml.site().getHome()
+       
         self.response.headers['Content-Type'] = 'text/html'
-        self.response.out.write('' + reponse )
+        self.response.out.write(reponse )
 
 
 class getBusinessRestHandler(webapp.RequestHandler):
 
     def get(self, what, where):
         
-        requete = getApi.Canada()
-        reponse = requete.listeReponse(what, where)
+        reponse = getApi.Canada().listeReponse(what, where)
     
-        html = getHtml.ParseCanada() 
-        fluxHtml = html.get(reponse) 
+        fluxHtml = getHtml.parseCanada().get(reponse) 
 
         self.response.headers['Content-Type'] = 'text/html'
-        self.response.out.write('' + fluxHtml )
+        self.response.out.write(fluxHtml )
 
 
 class getBusinessHandler(webapp.RequestHandler):
@@ -38,11 +34,31 @@ class getBusinessHandler(webapp.RequestHandler):
         what = self.request.get("what")
         where = self.request.get("where")
         
-        requete = getApi.Canada()
-        reponse = requete.listeReponse(what, where)
+        #On valide le ou
+        gwhere = getWhere.getCountry(where)
         
-        html = getHtml.ParseCanada() 
-        fluxHtml = html.get(reponse)
+        if(gwhere != 'Canada'):
+            fluxHtml = 'Ce pays n est pas encore supporte'
+        else:
+            reponse = getApi.Canada().listeReponse(what, where)
+            
+            fluxHtml = getHtml.parseCanada().get(reponse)
+
+        self.response.headers['Content-Type'] = 'text/html'
+        self.response.out.write(fluxHtml)
+#        self.response.out.write(gwhere)
+
+class getProHandler(webapp.RequestHandler):
+
+    def get(self):
+        
+        what = self.request.get("what")
+        where = self.request.get("where")
+        
+       
+        reponse = getApi.France().listeReponse(what, where)
+            
+        fluxHtml = getHtml.parseFrance().get(reponse)
 
         self.response.headers['Content-Type'] = 'text/html'
         self.response.out.write(fluxHtml)
@@ -51,7 +67,8 @@ class getBusinessHandler(webapp.RequestHandler):
 
 application = webapp.WSGIApplication([('/', MainPage),
                                       (r'/getBusinessRest/(.*)/(.*)', getBusinessRestHandler),
-                                      (r'/getBusiness', getBusinessHandler)
+                                      (r'/getBusiness', getBusinessHandler),
+                                      (r'/getPro', getProHandler)
                                      ],
                                      debug=True)
 def main():
